@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>微信PPT展示</title>
+    <title>PPT图片展示 - 微信专用</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -14,365 +14,409 @@
         }
         
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-            color: #333;
+            font-family: 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+            background: #2c3e50;
+            color: #fff;
             line-height: 1.6;
-            min-height: 100vh;
-            padding: 20px;
+            overflow: hidden;
+            touch-action: manipulation;
+            height: 100vh;
             display: flex;
             flex-direction: column;
-            align-items: center;
         }
         
-        .container {
-            width: 100%;
-            max-width: 1000px;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-            overflow: hidden;
-            margin: 20px 0;
-        }
-        
-        header {
-            background: #2c3e50;
-            color: white;
-            padding: 20px;
+        .header {
             text-align: center;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 10;
         }
         
         h1 {
-            font-size: 24px;
-            margin-bottom: 10px;
+            font-size: 1.5rem;
+            font-weight: 500;
+            margin-bottom: 5px;
         }
         
-        .ppt-viewer {
+        .subtitle {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .ppt-container {
+            flex: 1;
             position: relative;
-            height: 400px;
             overflow: hidden;
-            background: #ecf0f1;
         }
         
-        .slides-container {
+        .slides-wrapper {
             display: flex;
-            transition: transform 0.5s ease;
             height: 100%;
+            transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
         
         .slide {
             flex: 0 0 100%;
-            padding: 30px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            text-align: center;
-            background: white;
+            padding: 20px;
+            position: relative;
         }
         
-        .slide img {
-            max-width: 100%;
-            max-height: 250px;
-            border-radius: 8px;
+        .image-container {
+            width: 100%;
+            height: 60vh;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
             margin-bottom: 20px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            background: #34495e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
-        .slide h2 {
-            color: #2c3e50;
-            margin-bottom: 15px;
-            font-size: 22px;
+        .image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
         
-        .slide p {
-            color: #7f8c8d;
-            line-height: 1.6;
+        .slide-content {
+            text-align: center;
+            max-width: 90%;
+        }
+        
+        .slide-title {
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+            color: #ecf0f1;
+            font-weight: 500;
+        }
+        
+        .slide-desc {
+            font-size: 0.95rem;
+            color: #bdc3c7;
+            line-height: 1.5;
         }
         
         .navigation {
             display: flex;
             justify-content: center;
             padding: 15px;
-            background: #f8f9fa;
         }
         
-        .nav-btn {
-            width: 50px;
-            height: 50px;
+        .nav-dot {
+            width: 10px;
+            height: 10px;
             border-radius: 50%;
-            background: #3498db;
-            color: white;
+            background: rgba(255, 255, 255, 0.3);
+            margin: 0 6px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .nav-dot.active {
+            background: #fff;
+            transform: scale(1.2);
+        }
+        
+        .nav-arrows {
+            position: absolute;
+            top: 50%;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 10px;
+            transform: translateY(-50%);
+            z-index: 5;
+        }
+        
+        .arrow {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.4);
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 10px;
+            color: white;
+            font-size: 20px;
             cursor: pointer;
-            border: none;
-            font-size: 18px;
             transition: all 0.3s;
         }
         
-        .nav-btn:hover {
-            background: #2980b9;
-            transform: scale(1.05);
+        .arrow:active {
+            background: rgba(0, 0, 0, 0.6);
+            transform: scale(0.95);
         }
         
         .instructions {
-            padding: 25px;
-            background: white;
-        }
-        
-        .instructions h2 {
-            color: #2c3e50;
-            margin-bottom: 20px;
-            text-align: center;
-            font-size: 22px;
-        }
-        
-        .step {
-            display: flex;
-            margin-bottom: 20px;
-            align-items: flex-start;
-        }
-        
-        .step-number {
-            background: #3498db;
-            color: white;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 15px;
-            flex-shrink: 0;
-            font-weight: bold;
-        }
-        
-        .step-content {
-            flex: 1;
-        }
-        
-        .code-block {
-            background: #2c3e50;
-            color: #ecf0f1;
-            padding: 15px;
-            border-radius: 8px;
-            font-family: monospace;
-            overflow-x: auto;
-            margin: 15px 0;
-            line-height: 1.5;
-        }
-        
-        .tips {
-            background: #fff8e1;
-            border-left: 4px solid #ffc107;
-            padding: 15px;
-            margin: 20px 0;
-            border-radius: 0 8px 8px 0;
-        }
-        
-        .tips h3 {
-            color: #ff9800;
-            margin-bottom: 10px;
-        }
-        
-        footer {
-            text-align: center;
+            background: rgba(0, 0, 0, 0.3);
             padding: 20px;
-            color: white;
-            font-size: 14px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.85rem;
+            line-height: 1.6;
+        }
+        
+        .instructions h3 {
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+        
+        .instructions ol {
+            padding-left: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .instructions li {
+            margin-bottom: 8px;
+        }
+        
+        .instructions code {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
         }
         
         @media (max-width: 768px) {
-            .ppt-viewer {
-                height: 300px;
+            .image-container {
+                height: 50vh;
             }
             
-            .slide {
-                padding: 20px;
+            .slide-title {
+                font-size: 1.2rem;
             }
             
-            .slide h2 {
-                font-size: 20px;
+            .arrow {
+                width: 35px;
+                height: 35px;
+                font-size: 16px;
             }
+        }
+        
+        /* 微信优化样式 */
+        .wechat-optimized {
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        /* 加载动画 */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .slide {
+            animation: fadeIn 0.5s ease;
+        }
+        
+        /* 滑动指示器 */
+        .swipe-hint {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.6);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>微信PPT展示页面</h1>
-            <p>简单、免费、无需注册</p>
-        </header>
-        
-        <div class="ppt-viewer">
-            <div class="slides-container">
-                <div class="slide">
-                    <img src="https://images.unsplash.com/photo-1581276879432-15e50529f34b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="PPT展示示例">
-                    <h2>欢迎使用PPT在线展示</h2>
-                    <p>这是一个简单易用的PPT展示页面，可以在微信中直接打开</p>
-                </div>
-                <div class="slide">
-                    <img src="https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1074&q=80" alt="自定义内容">
-                    <h2>如何添加您的内容</h2>
-                    <p>按照右侧的说明，轻松替换为您自己的PPT内容</p>
-                </div>
-                <div class="slide">
-                    <img src="https://images.unsplash.com/photo-1432888622747-4eb9a8f5a07a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1174&q=80" alt="微信展示">
-                    <h2>在微信中分享</h2>
-                    <p>上传到服务器后，即可在微信中直接打开和分享</p>
-                </div>
-            </div>
-        </div>
-        
-        <div class="navigation">
-            <button class="nav-btn" id="prev-btn"><i class="fas fa-arrow-left"></i></button>
-            <button class="nav-btn" id="next-btn"><i class="fas fa-arrow-right"></i></button>
-        </div>
-        
-        <div class="instructions">
-            <h2>如何添加您自己的PPT内容</h2>
-            
-            <div class="step">
-                <div class="step-number">1</div>
-                <div class="step-content">
-                    <h3>准备您的PPT内容</h3>
-                    <p>将PPT中的每一页导出为图片（PNG或JPG格式），或者准备好要展示的文本内容。</p>
-                </div>
-            </div>
-            
-            <div class="step">
-                <div class="step-number">2</div>
-                <div class="step-content">
-                    <h3>修改HTML代码</h3>
-                    <p>找到代码中的 <code>slides-container</code> 部分，按照以下格式添加您的幻灯片：</p>
-                    <div class="code-block">
-&lt;div class="slide"&gt;<br>
-&nbsp;&nbsp;&lt;img src="<strong>您的图片URL</strong>" alt="幻灯片说明"&gt;<br>
-&nbsp;&nbsp;&lt;h2&gt;<strong>您的标题</strong>&lt;/h2&gt;<br>
-&nbsp;&nbsp;&lt;p&gt;<strong>您的描述文本</strong>&lt;/p&gt;<br>
-&lt;/div&gt;
-                    </div>
-                </div>
-            </div>
-            
-            <div class="step">
-                <div class="step-number">3</div>
-                <div class="step-content">
-                    <h3>上传图片</h3>
-                    <p>如果您有图片，需要将它们上传到网络：</p>
-                    <ul>
-                        <li>使用免费图床服务（如imgbb、sm.ms）</li>
-                        <li>使用GitHub等代码托管平台</li>
-                        <li>使用云存储服务（如阿里云OSS、腾讯云COS）</li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="step">
-                <div class="step-number">4</div>
-                <div class="step-content">
-                    <h3>部署到网络</h3>
-                    <p>将修改后的HTML文件上传到免费托管服务：</p>
-                    <ul>
-                        <li>GitHub Pages</li>
-                        <li>Netlify</li>
-                        <li>Vercel</li>
-                        <li> Coding Pages（国内访问更快）</li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="tips">
-                <h3>实用提示</h3>
-                <p>• 保持图片尺寸一致，以获得最佳视觉效果</p>
-                <p>• 每张幻灯片内容不宜过多，确保在手机上清晰可读</p>
-                <p>• 测试在微信中的打开速度，如果太慢可以考虑压缩图片</p>
-            </div>
-        </div>
+    <div class="header">
+        <h1>我的PPT图片展示</h1>
+        <div class="subtitle">滑动查看下一张 ← →</div>
     </div>
     
-    <footer>
-        <p>© 2023 PPT在线展示工具 | 简单、免费、易用</p>
-    </footer>
+    <div class="ppt-container">
+        <div class="slides-wrapper">
+            <div class="slide">
+                <div class="image-container">
+                    <img src="https://images.unsplash.com/photo-1581276879432-15e50529f34b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="幻灯片1">
+                </div>
+                <div class="slide-content">
+                    <h2 class="slide-title">项目介绍</h2>
+                    <p class="slide-desc">这是一个使用HTML5创建的PPT风格图片展示页面，专为微信优化</p>
+                </div>
+            </div>
+            
+            <div class="slide">
+                <div class="image-container">
+                    <img src="https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1074&q=80" alt="幻灯片2">
+                </div>
+                <div class="slide-content">
+                    <h2 class="slide-title">技术特点</h2>
+                    <p class="slide-desc">纯前端实现，支持触摸滑动，零成本部署，微信内直接访问</p>
+                </div>
+            </div>
+            
+            <div class="slide">
+                <div class="image-container">
+                    <img src="https://images.unsplash.com/photo-1432888622747-4eb9a8f5a07a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1174&q=80" alt="幻灯片3">
+                </div>
+                <div class="slide-content">
+                    <h2 class="slide-title">使用方法</h2>
+                    <p class="slide-desc">按照下方说明替换为您自己的图片和内容</p>
+                </div>
+            </div>
+            
+            <div class="slide">
+                <div class="image-container">
+                    <img src="https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="幻灯片4">
+                </div>
+                <div class="slide-content">
+                    <h2 class="slide-title">自定义内容</h2>
+                    <p class="slide-desc">您可以轻松添加更多幻灯片或修改现有内容</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="nav-arrows">
+            <div class="arrow prev-arrow">
+                <i class="fas fa-chevron-left"></i>
+            </div>
+            <div class="arrow next-arrow">
+                <i class="fas fa-chevron-right"></i>
+            </div>
+        </div>
+        
+        <div class="swipe-hint">左右滑动切换页面</div>
+    </div>
+    
+    <div class="navigation">
+        <div class="nav-dot active"></div>
+        <div class="nav-dot"></div>
+        <div class="nav-dot"></div>
+        <div class="nav-dot"></div>
+    </div>
+    
+    <div class="instructions">
+        <h3>如何替换为您自己的内容？</h3>
+        <ol>
+            <li>准备您的图片并上传到网络（如免费图床或云存储）</li>
+            <li>在HTML代码中找到<code>&lt;div class="slides-wrapper"&gt;</code>部分</li>
+            <li>修改<code>img src</code>为您自己的图片URL</li>
+            <li>更新<code>slide-title</code>和<code>slide-desc</code>中的文本内容</li>
+            <li>如需添加更多幻灯片，复制整个<code>&lt;div class="slide"&gt;...&lt;/div&gt;</code>段</li>
+        </ol>
+    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const slidesContainer = document.querySelector('.slides-container');
+            const slidesWrapper = document.querySelector('.slides-wrapper');
             const slides = document.querySelectorAll('.slide');
-            const prevBtn = document.getElementById('prev-btn');
-            const nextBtn = document.getElementById('next-btn');
+            const dots = document.querySelectorAll('.nav-dot');
+            const prevArrow = document.querySelector('.prev-arrow');
+            const nextArrow = document.querySelector('.next-arrow');
             
             let currentSlide = 0;
+            let startX = 0;
+            let endX = 0;
             
-            // 更新幻灯片位置
+            // 更新幻灯片位置和导航点
             function updateSlide() {
-                slidesContainer.style.transform = `translateX(-${currentSlide * 100}%)`;
+                slidesWrapper.style.transform = `translateX(-${currentSlide * 100}%)`;
+                
+                // 更新导航点
+                dots.forEach((dot, index) => {
+                    if (index === currentSlide) {
+                        dot.classList.add('active');
+                    } else {
+                        dot.classList.remove('active');
+                    }
+                });
             }
             
             // 下一张幻灯片
-            nextBtn.addEventListener('click', function() {
+            function nextSlide() {
                 if (currentSlide < slides.length - 1) {
                     currentSlide++;
                     updateSlide();
                 }
-            });
+            }
             
             // 上一张幻灯片
-            prevBtn.addEventListener('click', function() {
+            function prevSlide() {
                 if (currentSlide > 0) {
                     currentSlide--;
                     updateSlide();
                 }
+            }
+            
+            // 导航箭头事件
+            nextArrow.addEventListener('click', nextSlide);
+            prevArrow.addEventListener('click', prevSlide);
+            
+            // 导航点点击事件
+            dots.forEach((dot, index) => {
+                dot.addEventListener('click', () => {
+                    currentSlide = index;
+                    updateSlide();
+                });
             });
             
-            // 添加触摸滑动支持
-            let touchStartX = 0;
-            let touchEndX = 0;
-            
-            slidesContainer.addEventListener('touchstart', function(e) {
-                touchStartX = e.changedTouches[0].screenX;
+            // 触摸事件处理
+            slidesWrapper.addEventListener('touchstart', (e) => {
+                startX = e.touches[0].clientX;
             });
             
-            slidesContainer.addEventListener('touchend', function(e) {
-                touchEndX = e.changedTouches[0].screenX;
+            slidesWrapper.addEventListener('touchend', (e) => {
+                endX = e.changedTouches[0].clientX;
                 handleSwipe();
             });
             
+            // 鼠标事件处理（用于桌面测试）
+            slidesWrapper.addEventListener('mousedown', (e) => {
+                startX = e.clientX;
+                document.addEventListener('mouseup', handleMouseUp);
+            });
+            
+            function handleMouseUp(e) {
+                endX = e.clientX;
+                handleSwipe();
+                document.removeEventListener('mouseup', handleMouseUp);
+            }
+            
+            // 处理滑动方向
             function handleSwipe() {
                 const minSwipeDistance = 50;
                 
-                if (touchStartX - touchEndX > minSwipeDistance) {
+                if (startX - endX > minSwipeDistance) {
                     // 向左滑动
-                    if (currentSlide < slides.length - 1) {
-                        currentSlide++;
-                        updateSlide();
-                    }
-                } else if (touchEndX - touchStartX > minSwipeDistance) {
+                    nextSlide();
+                } else if (endX - startX > minSwipeDistance) {
                     // 向右滑动
-                    if (currentSlide > 0) {
-                        currentSlide--;
-                        updateSlide();
-                    }
+                    prevSlide();
                 }
             }
             
-            // 添加键盘导航支持
-            document.addEventListener('keydown', function(e) {
+            // 键盘导航支持
+            document.addEventListener('keydown', (e) => {
                 if (e.key === 'ArrowRight') {
-                    if (currentSlide < slides.length - 1) {
-                        currentSlide++;
-                        updateSlide();
-                    }
+                    nextSlide();
                 } else if (e.key === 'ArrowLeft') {
-                    if (currentSlide > 0) {
-                        currentSlide--;
-                        updateSlide();
-                    }
+                    prevSlide();
                 }
             });
+            
+            // 微信浏览器优化
+            function isWeChat() {
+                return /MicroMessenger/i.test(navigator.userAgent);
+            }
+            
+            if (isWeChat()) {
+                document.body.classList.add('wechat-optimized');
+            }
         });
     </script>
 </body>
