@@ -30,6 +30,7 @@
             padding: 15px;
             background: rgba(0, 0, 0, 0.4);
             z-index: 10;
+            position: relative;
         }
         
         h1 {
@@ -61,17 +62,18 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 20px;
+            padding: 15px;
             position: relative;
         }
         
         .image-container {
             width: 100%;
-            height: 60vh;
-            border-radius: 12px;
+            max-width: 90vw;
+            height: 65vh;
+            border-radius: 8px;
             overflow: hidden;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             background: #34495e;
             display: flex;
             align-items: center;
@@ -81,7 +83,7 @@
         .image-container img {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: contain;
         }
         
         .slide-content {
@@ -90,14 +92,14 @@
         }
         
         .slide-title {
-            font-size: 1.4rem;
-            margin-bottom: 10px;
+            font-size: 1.3rem;
+            margin-bottom: 8px;
             color: #ecf0f1;
             font-weight: 500;
         }
         
         .slide-desc {
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             color: #bdc3c7;
             line-height: 1.5;
         }
@@ -105,15 +107,16 @@
         .navigation {
             display: flex;
             justify-content: center;
-            padding: 15px;
+            padding: 12px;
+            flex-wrap: wrap;
         }
         
         .nav-dot {
-            width: 10px;
-            height: 10px;
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
             background: rgba(255, 255, 255, 0.3);
-            margin: 0 6px;
+            margin: 0 4px;
             transition: all 0.3s;
             cursor: pointer;
         }
@@ -129,21 +132,21 @@
             width: 100%;
             display: flex;
             justify-content: space-between;
-            padding: 0 10px;
+            padding: 0 5px;
             transform: translateY(-50%);
             z-index: 5;
         }
         
         .arrow {
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             background: rgba(0, 0, 0, 0.4);
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 20px;
+            font-size: 16px;
             cursor: pointer;
             transition: all 0.3s;
         }
@@ -155,46 +158,82 @@
         
         .instructions {
             background: rgba(0, 0, 0, 0.3);
-            padding: 20px;
+            padding: 15px;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             line-height: 1.6;
+            display: none;
         }
         
         .instructions h3 {
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             font-weight: 500;
         }
         
         .instructions ol {
-            padding-left: 20px;
-            margin-bottom: 15px;
+            padding-left: 18px;
+            margin-bottom: 12px;
         }
         
         .instructions li {
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
         
         .instructions code {
             background: rgba(0, 0, 0, 0.4);
-            padding: 2px 6px;
-            border-radius: 4px;
+            padding: 2px 5px;
+            border-radius: 3px;
             font-family: monospace;
+        }
+        
+        .toggle-instructions {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+            z-index: 20;
+        }
+        
+        .slide-counter {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.7);
+            background: rgba(0, 0, 0, 0.3);
+            padding: 3px 8px;
+            border-radius: 12px;
+            z-index: 10;
         }
         
         @media (max-width: 768px) {
             .image-container {
-                height: 50vh;
+                height: 60vh;
             }
             
             .slide-title {
-                font-size: 1.2rem;
+                font-size: 1.1rem;
             }
             
             .arrow {
-                width: 35px;
-                height: 35px;
-                font-size: 16px;
+                width: 32px;
+                height: 32px;
+                font-size: 14px;
+            }
+            
+            .nav-dot {
+                width: 7px;
+                height: 7px;
+                margin: 0 3px;
             }
         }
         
@@ -216,11 +255,11 @@
         /* 滑动指示器 */
         .swipe-hint {
             position: absolute;
-            bottom: 20px;
+            bottom: 15px;
             left: 0;
             right: 0;
             text-align: center;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: rgba(255, 255, 255, 0.6);
             animation: pulse 2s infinite;
         }
@@ -229,6 +268,12 @@
             0% { opacity: 0.6; }
             50% { opacity: 1; }
             100% { opacity: 0.6; }
+        }
+        
+        /* 高分辨率图片优化 */
+        .high-res-image {
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
         }
     </style>
 </head>
@@ -240,9 +285,11 @@
     
     <div class="ppt-container">
         <div class="slides-wrapper">
+            <!-- 幻灯片1 -->
             <div class="slide">
+                <div class="slide-counter">1/10</div>
                 <div class="image-container">
-                    <img src="https://ppt13485.oss-cn-beijing.aliyuncs.com/20250825162254880.png" alt="幻灯片1">
+                    <img src="https://ppt13485.oss-cn-beijing.aliyuncs.com/20250825162254880.png" alt="幻灯片1" class="high-res-image">
                 </div>
                 <div class="slide-content">
                     <h2 class="slide-title">项目介绍</h2>
@@ -250,9 +297,11 @@
                 </div>
             </div>
             
+            <!-- 幻灯片2 -->
             <div class="slide">
+                <div class="slide-counter">2/10</div>
                 <div class="image-container">
-                    <img src="https://ppt13485.oss-cn-beijing.aliyuncs.com/20250825163443014.png" alt="幻灯片2">
+                    <img src="https://ppt13485.oss-cn-beijing.aliyuncs.com/20250825163443014.png" alt="幻灯片2" class="high-res-image">
                 </div>
                 <div class="slide-content">
                     <h2 class="slide-title">技术特点</h2>
@@ -260,9 +309,11 @@
                 </div>
             </div>
             
+            <!-- 幻灯片3 -->
             <div class="slide">
+                <div class="slide-counter">3/10</div>
                 <div class="image-container">
-                    <img src="https://ppt13485.oss-cn-beijing.aliyuncs.com/20250825163606948.png" alt="幻灯片3">
+                    <img src="https://ppt13485.oss-cn-beijing.aliyuncs.com/20250825163606948.png" alt="幻灯片3" class="high-res-image">
                 </div>
                 <div class="slide-content">
                     <h2 class="slide-title">使用方法</h2>
@@ -270,13 +321,87 @@
                 </div>
             </div>
             
+            <!-- 幻灯片4 -->
             <div class="slide">
+                <div class="slide-counter">4/10</div>
                 <div class="image-container">
-                    <img src="https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="幻灯片4">
+                    <img src="https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80" alt="幻灯片4" class="high-res-image">
                 </div>
                 <div class="slide-content">
                     <h2 class="slide-title">自定义内容</h2>
                     <p class="slide-desc">您可以轻松添加更多幻灯片或修改现有内容</p>
+                </div>
+            </div>
+            
+            <!-- 幻灯片5 -->
+            <div class="slide">
+                <div class="slide-counter">5/10</div>
+                <div class="image-container">
+                    <img src="https://images.unsplash.com/photo-1542744094-3a31f272c490?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80" alt="幻灯片5" class="high-res-image">
+                </div>
+                <div class="slide-content">
+                    <h2 class="slide-title">幻灯片5</h2>
+                    <p class="slide-desc">这是第五张幻灯片的描述内容</p>
+                </div>
+            </div>
+            
+            <!-- 幻灯片6 -->
+            <div class="slide">
+                <div class="slide-counter">6/10</div>
+                <div class="image-container">
+                    <img src="https://images.unsplash.com/photo-1542744095-fcf48d80b0fd?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80" alt="幻灯片6" class="high-res-image">
+                </div>
+                <div class="slide-content">
+                    <h2 class="slide-title">幻灯片6</h2>
+                    <p class="slide-desc">这是第六张幻灯片的描述内容</p>
+                </div>
+            </div>
+            
+            <!-- 幻灯片7 -->
+            <div class="slide">
+                <div class="slide-counter">7/10</div>
+                <div class="image-container">
+                    <img src="https://images.unsplash.com/photo-1542744094-3a31f272c490?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80" alt="幻灯片7" class="high-res-image">
+                </div>
+                <div class="slide-content">
+                    <h2 class="slide-title">幻灯片7</h2>
+                    <p class="slide-desc">这是第七张幻灯片的描述内容</p>
+                </div>
+            </div>
+            
+            <!-- 幻灯片8 -->
+            <div class="slide">
+                <div class="slide-counter">8/10</div>
+                <div class="image-container">
+                    <img src="https://images.unsplash.com/photo-1542744095-5fdebfad2c5a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80" alt="幻灯片8" class="high-res-image">
+                </div>
+                <div class="slide-content">
+                    <h2 class="slide-title">幻灯片8</h2>
+                    <p class="slide-desc">这是第八张幻灯片的描述内容</p>
+                </div>
+            </div>
+            
+            <!-- 幻灯片9 -->
+            <div class="slide">
+                <div class="slide-counter">9/10</div>
+                <div class="image-container">
+                    <img src="https://images.unsplash.com/photo-1542744094-0f5b7ad4ecb5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80" alt="幻灯片9" class="high-res-image">
+                </div>
+                <div class="slide-content">
+                    <h2 class="slide-title">幻灯片9</h2>
+                    <p class="slide-desc">这是第九张幻灯片的描述内容</p>
+                </div>
+            </div>
+            
+            <!-- 幻灯片10 -->
+            <div class="slide">
+                <div class="slide-counter">10/10</div>
+                <div class="image-container">
+                    <img src="https://images.unsplash.com/photo-1542744094-0a5f5b7ad4ec?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80" alt="幻灯片10" class="high-res-image">
+                </div>
+                <div class="slide-content">
+                    <h2 class="slide-title">幻灯片10</h2>
+                    <p class="slide-desc">这是第十张幻灯片的描述内容</p>
                 </div>
             </div>
         </div>
@@ -291,10 +416,19 @@
         </div>
         
         <div class="swipe-hint">左右滑动切换页面</div>
+        <div class="toggle-instructions">
+            <i class="fas fa-question"></i>
+        </div>
     </div>
     
     <div class="navigation">
         <div class="nav-dot active"></div>
+        <div class="nav-dot"></div>
+        <div class="nav-dot"></div>
+        <div class="nav-dot"></div>
+        <div class="nav-dot"></div>
+        <div class="nav-dot"></div>
+        <div class="nav-dot"></div>
         <div class="nav-dot"></div>
         <div class="nav-dot"></div>
         <div class="nav-dot"></div>
@@ -318,6 +452,9 @@
             const dots = document.querySelectorAll('.nav-dot');
             const prevArrow = document.querySelector('.prev-arrow');
             const nextArrow = document.querySelector('.next-arrow');
+            const toggleInstructions = document.querySelector('.toggle-instructions');
+            const instructions = document.querySelector('.instructions');
+            const counters = document.querySelectorAll('.slide-counter');
             
             let currentSlide = 0;
             let startX = 0;
@@ -334,6 +471,11 @@
                     } else {
                         dot.classList.remove('active');
                     }
+                });
+                
+                // 更新计数器
+                counters.forEach((counter, index) => {
+                    counter.textContent = `${index + 1}/${slides.length}`;
                 });
             }
             
@@ -409,6 +551,11 @@
                 }
             });
             
+            // 显示/隐藏说明
+            toggleInstructions.addEventListener('click', () => {
+                instructions.style.display = instructions.style.display === 'block' ? 'none' : 'block';
+            });
+            
             // 微信浏览器优化
             function isWeChat() {
                 return /MicroMessenger/i.test(navigator.userAgent);
@@ -417,9 +564,23 @@
             if (isWeChat()) {
                 document.body.classList.add('wechat-optimized');
             }
+            
+            // 预加载图片
+            function preloadImages() {
+                const images = document.querySelectorAll('img');
+                images.forEach(img => {
+                    if (img.complete) {
+                        img.classList.add('loaded');
+                    } else {
+                        img.addEventListener('load', () => {
+                            img.classList.add('loaded');
+                        });
+                    }
+                });
+            }
+            
+            preloadImages();
         });
     </script>
 </body>
 </html>
-
-
